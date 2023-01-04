@@ -1,4 +1,4 @@
-import Grid2 from "@mui/material/Unstable_Grid2";
+import Grid2 from "@mui/material/Unstable_Grid2"
 import {
   Box,
   Paper,
@@ -9,45 +9,49 @@ import {
   Button,
   Divider,
   Typography,
-} from "@mui/material";
-import { OutlinedInput } from "@mui/material";
-import axios from "axios";
+  Tooltip,
+} from "@mui/material"
+import { OutlinedInput } from "@mui/material"
+import axios from "axios"
 
-import { useState, useRef, ChangeEvent, FormEvent } from "react";
+import { useState, useRef, ChangeEvent, FormEvent } from "react"
 
 const Calculator = (): JSX.Element => {
-  const [operation, setOperation] = useState("");
-  const [result, setResult] = useState("");
+  const [operation, setOperation] = useState("")
+  const [result, setResult] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   // const first = useRef<HTMLInputElement>();
   // const second = useRef<HTMLInputElement>();
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setOperation(e.target.value);
-  };
+    setOperation(e.target.value)
+  }
 
   interface MyForm extends EventTarget {
-    first: HTMLInputElement;
-    second: HTMLInputElement;
+    first: HTMLInputElement
+    second: HTMLInputElement
   }
 
   const handleCalculate = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const target = e.target as MyForm;
+    e.preventDefault()
+    const target = e.target as MyForm
     const query = {
       operation: operation,
       first: target.first.value,
       second: target.second.value,
-    };
+    }
 
+    setIsLoading(true)
     axios
       .get(`/api/calculate/${query.operation}/${query.first}/${query.second}`)
       .then((res) => {
-        setResult(res.data.result);
+        setResult(res.data.result)
+        setIsLoading(false)
       })
       .catch((err) => {
-        setResult(err.response.data.message);
-      });
-  };
+        setResult(err.response.data.message)
+      })
+  }
 
   return (
     <form id="calculator-form" onSubmit={handleCalculate}>
@@ -83,9 +87,19 @@ const Calculator = (): JSX.Element => {
         </Grid2>
         <Grid2 xs={12}>
           <FormControl fullWidth>
-            <Button variant="contained" type="submit">
-              Calculate
-            </Button>
+            {isLoading ? (
+              <Tooltip title="Please wait for the server reply">
+                <span>
+                  <Button variant="contained" type="submit" disabled fullWidth>
+                    Calculate
+                  </Button>
+                </span>
+              </Tooltip>
+            ) : (
+              <Button variant="contained" type="submit">
+                Calculate
+              </Button>
+            )}
           </FormControl>
         </Grid2>
         <Grid2 xs={12}>
@@ -102,7 +116,6 @@ const Calculator = (): JSX.Element => {
         </Grid2>
       </Grid2>
     </form>
-  );
-};
-export default Calculator;
-
+  )
+}
+export default Calculator
