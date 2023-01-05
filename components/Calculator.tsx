@@ -27,14 +27,14 @@ const Calculator = (): JSX.Element => {
     setOperation(e.target.value)
   }
 
-  interface MyForm extends EventTarget {
+  interface MyForm extends HTMLFormControlsCollection {
     first: HTMLInputElement
     second: HTMLInputElement
   }
 
   const handleCalculate = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const target = e.target as MyForm
+    const target = e.currentTarget.elements as MyForm
     const query = {
       operation: operation,
       first: target.first.value,
